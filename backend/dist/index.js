@@ -17,9 +17,7 @@ const app = (0, express_1.default)();
 const PORT = process.env.PORT;
 (0, db_1.default)();
 app.use((0, cors_1.default)({
-    origin: process.env.NODE_ENV === 'production'
-        ? [process.env.FRONTEND_URL]
-        : ['http://localhost:5173'],
+    origin: [process.env.FRONTEND_URL],
     credentials: true
 }));
 app.use((0, helmet_1.default)());

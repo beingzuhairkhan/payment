@@ -15,9 +15,7 @@ const PORT = process.env.PORT;
 
 connectDB();
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? [process.env.FRONTEND_URL!]
-    : ['http://localhost:5173'],
+  origin:[process.env.FRONTEND_URL!],
   credentials: true
 }));
 app.use(helmet())
