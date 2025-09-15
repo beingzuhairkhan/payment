@@ -4,7 +4,6 @@ import type { PaymentData, School } from '../types';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
-// Extend AxiosRequestConfig to include _retry
 interface AxiosRequestConfigWithRetry extends AxiosRequestConfig {
   _retry?: boolean;
 }
@@ -68,18 +67,13 @@ export const transactionAPI = {
     authAPI.get(`/transaction/school/${schoolId}`, { params }),
   getTransactionStatus: (customOrderId: string) =>
     authAPI.get(`/transaction/status/${customOrderId}`),
-  getTransactionStats: (params: Record<string, any> = {}) =>
+  getTransactionStats: () =>
     authAPI.get('/transaction/overview')
 };
 
 // Payment API
 export const paymentAPI = {
   createPayment: (paymentData: PaymentData) => authAPI.post('/order/create-payment', paymentData)
-};
-
-// Webhook API
-export const webhookAPI = {
-  getWebhookLogs: (params: Record<string, any> = {}) => authAPI.get('/webhook/logs', { params })
 };
 
 export const school = {

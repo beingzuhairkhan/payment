@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import type { School } from "../types";
 import { school } from "../services/api";

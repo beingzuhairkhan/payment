@@ -22,7 +22,7 @@ exports.createPaymentValidation = joi_1.default.object({
         id: joi_1.default.string().required(),
         email: joi_1.default.string().email().required(),
     }).required(),
-    gateway_name: joi_1.default.string().valid("PhonePe", "Paytm", "Razorpay", "UPI", "NetBanking").required(),
+    gateway_name: joi_1.default.string().valid("NetBanking").required(),
     custom_order_id: joi_1.default.string().optional(),
     order_amount: joi_1.default.number().min(0).required()
 });

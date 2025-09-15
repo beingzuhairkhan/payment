@@ -20,7 +20,7 @@ export const createPaymentValidation = Joi.object({
     id: Joi.string().required(),
     email: Joi.string().email().required(),
   }).required(),
-  gateway_name: Joi.string().valid("PhonePe", "Paytm", "Razorpay", "UPI", "NetBanking").required(),
+  gateway_name: Joi.string().valid("NetBanking").required(),
   custom_order_id: Joi.string().optional(),
   order_amount: Joi.number().min(0).required()
 });

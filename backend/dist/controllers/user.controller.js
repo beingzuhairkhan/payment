@@ -162,9 +162,8 @@ const refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             });
         }
         const { _id, name, email } = req.user;
-        // Pass a single object
         const token = generateJWTToken({
-            _id: _id, // or _id.toString() if your NewUser._id is string
+            _id: _id,
             name,
             email
         });

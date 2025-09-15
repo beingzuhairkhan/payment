@@ -1,12 +1,11 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 
-// Define TypeScript interface for User document
+
 export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  // school_id?: mongoose.Types.ObjectId;
 
   comparePassword(candidatePassword: string): Promise<boolean>;
 }

@@ -1,10 +1,7 @@
-import React from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useTheme } from '../contexts/ThemeContext'
 import { 
-  UserIcon, 
-  BellIcon, 
-  ShieldCheckIcon,
+  UserIcon,
   MoonIcon,
   SunIcon,
   ComputerDesktopIcon
@@ -12,9 +9,13 @@ import {
 
 const Settings = () => {
   const { user } = useAuth()
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme() as {
+  theme: string
+  setTheme: (theme: string) => void
+  systemTheme?: string
+}
 
-  const handleThemeChange = (newTheme) => {
+  const handleThemeChange = (newTheme:'light' | 'dark' | 'system') => {
     setTheme(newTheme)
   }
 

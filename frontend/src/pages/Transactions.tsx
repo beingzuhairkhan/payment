@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import  { useState, useEffect } from 'react'
 import { useQuery } from 'react-query'
 import { useSearchParams } from 'react-router-dom'
 import {
@@ -10,14 +10,19 @@ import { MdOutlineContentCopy } from "react-icons/md";
 import { transactionAPI } from '../services/api'
 import LoadingSpinner from '../components/UI/LoadingSpinner'
 import { toast } from 'react-hot-toast';
+import type { Filters, ITransaction, TransactionStatus } from '../types';
+
+type SortField = 'payment_time' | 'createdAt' | 'order_amount'|'custom_order_id' | 'transaction_amount' | 'status'
 
 const Transactions = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [filters, setFilters] = useState({
-    page: parseInt(searchParams.get('page')) || 1,
-    limit: parseInt(searchParams.get('limit')) || 10,
+  const orderParam = searchParams.get('order');
+  const order: 'asc' | 'desc' = orderParam === 'asc' ? 'asc' : 'desc';
+  const [filters, setFilters] = useState<Filters>({
+    page: parseInt(searchParams.get('page') ?? "1", 10),
+    limit: parseInt(searchParams.get('limit') ?? "10", 10),
     sort: searchParams.get('sort') || 'payment_time',
-    order: searchParams.get('order') || 'desc',
+    order:order,
     status: searchParams.getAll('status') || [],
     gateway: searchParams.getAll('gateway') || [],
     search: searchParams.get('search') || '',
@@ -33,9 +38,9 @@ const Transactions = () => {
 
     Object.entries(filters).forEach(([key, value]) => {
       if (Array.isArray(value)) {
-        value.forEach(v => v && params.append(key, v))
-      } else if (value) {
-        params.set(key, value)
+        value.forEach(v => v && params.append(key, String(v)))
+      } else if (value !== undefined && value !== null) {
+        params.set(key, String(value))
       }
     })
 
@@ -56,29 +61,37 @@ const Transactions = () => {
   // console.log("transactions", transactions)
   const pagination = data?.data?.pagination || {}
 
-  const handleFilterChange = (key, value) => {
-    setFilters(prev => ({
-      ...prev,
-      [key]: value,
-      page: 1 // Reset page when filtering
-    }))
-  }
+  const handleFilterChange = <K extends keyof Filters>(key: K, value: Filters[K]) => {
+  setFilters(prev => ({
+    ...prev,
+    [key]: value,
+    page: 1 
+  }))
+}
 
-  const handleMultiSelectChange = (key, value) => {
-    setFilters(prev => ({
-      ...prev,
-      [key]: prev[key].includes(value)
-        ? prev[key].filter(v => v !== value)
-        : [...prev[key], value],
-      page: 1
-    }))
-  }
 
-  const handlePageChange = (page) => {
+  const handleMultiSelectChange = <K extends keyof Filters>(
+  key: K,
+  value: string
+) => {
+  setFilters(prev => {
+    const prevArray = Array.isArray(prev[key]) ? prev[key] as string[] : []
+
+    return {
+      ...prev,
+      [key]: prevArray.includes(value)
+        ? prevArray.filter(v => v !== value)
+        : [...prevArray, value],
+      page: 1 
+    }
+  })
+}
+
+  const handlePageChange = (page:number) => {
     setFilters(prev => ({ ...prev, page }))
   }
 
-  const handleSort = (field) => {
+  const handleSort = (field:SortField) => {
     setFilters(prev => ({
       ...prev,
       sort: field,
@@ -100,7 +113,7 @@ const Transactions = () => {
     })
   }
 
-  const getStatusBadgeClass = (status) => {
+  const getStatusBadgeClass = (status:TransactionStatus) => {
     switch (status) {
       case 'success':
         return 'status-badge status-success'
@@ -113,19 +126,20 @@ const Transactions = () => {
     }
   }
 
-  const getSortIcon = (field) => {
+  const getSortIcon =(field: SortField): string | null => {
     if (filters.sort !== field) return null
     return filters.order === 'asc' ? '↑' : '↓'
   }
 
   if (error) {
+    const err = error as any;
     return (
       <div className="text-center py-12">
         <div className="text-red-500 dark:text-red-400 mb-2">
           Error loading transactions
         </div>
         <p className="text-gray-600 dark:text-gray-400">
-          {error.response?.data?.message || error.message}
+          {err.response?.data?.message || err.message}
         </p>
       </div>
     )
@@ -296,20 +310,19 @@ const Transactions = () => {
           </div>
         ) : transactions.length > 0 ? (
           <>
-            <div className="overflow-x-auto p-0">
-              <table className="table">
-                <thead className="table-header">
+            <div className="overflow-x-auto p-0 rounded-md">
+              <table className="table ">
+                <thead className="table-header ">
                   <tr>
-                    <th className="table-header-cell responsive-hide-sm">SR.No</th>
-                    <th className="table-header-cell responsive-hide-sm">Institute Name</th>
+                    <th className="table-header-cell ">SR.No</th>
+                    <th className="table-header-cell ">Institute Name</th>
                     <th
                       className="table-header-cell cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
                       onClick={() => handleSort('custom_order_id')}
                     >
                       <div className="flex items-center">
                         Order ID
-                        <ArrowsUpDownIcon className="ml-1 h-3 w-3" />
-                        <span className="ml-1">{getSortIcon('custom_order_id')}</span>
+                 
                       </div>
                     </th>
                     <th className="table-header-cell">Student</th>
@@ -357,8 +370,8 @@ const Transactions = () => {
 
                   </tr>
                 </thead>
-                <tbody className="table-body hover:scale">
-                  {transactions.map((transaction, index) => (
+                <tbody className="table-body ">
+                  {transactions.map((transaction:ITransaction, index:number) => (
 
                     <tr key={transaction.collect_id}
                       className="rounded-lg transition-all duration-200 hover:scale-[1.02] hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-md "
@@ -382,7 +395,7 @@ const Transactions = () => {
                           }}
                         >
                           {transaction.custom_order_id}
-                          <MdOutlineContentCopy className=" ml-2 h-5 w-5 text-white" />
+                          <MdOutlineContentCopy className=" ml-2 h-5 w-5 text-black dark:text-white" />
                         </span>
                       </td>
                       <td className="table-cell">

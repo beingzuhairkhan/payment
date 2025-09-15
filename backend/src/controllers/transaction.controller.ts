@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
 import Order from '../models/order.model'
-import School from '../models/school.model'
 import OrderStatus from '../models/orderStatus.model'
 
 export const getAllTransactions = async (req: Request, res: Response) => {
@@ -62,11 +61,10 @@ export const getAllTransactions = async (req: Request, res: Response) => {
             ]
         }
 
-        const sortObj: any = {}
-        const sortField = (sort as string).includes('.') ? sort : `orderStatus.${sort}`
-        sortObj[sortField as string] = order === 'desc' ? -1 : 1
+        const sortObj: any = {};
+        const sortField = (sort as string) || 'payment_time'; 
+        sortObj[sortField] = order?.toLowerCase() === 'desc' ? -1 : 1;
 
-        // Aggregation pipeline
         const pipeline: any[] = [
             {
                 $lookup: {
@@ -82,6 +80,7 @@ export const getAllTransactions = async (req: Request, res: Response) => {
                     preserveNullAndEmptyArrays: false,
                 },
             },
+
             {
                 $lookup: {
                     from: 'schools',
@@ -95,6 +94,7 @@ export const getAllTransactions = async (req: Request, res: Response) => {
                     path: '$school',
                     preserveNullAndEmptyArrays: true,
                 },
+
             },
             {
                 $match: matchCondition,
@@ -121,6 +121,7 @@ export const getAllTransactions = async (req: Request, res: Response) => {
                 $sort: sortObj,
             },
         ]
+
 
         const countPipeline = [...pipeline, { $count: 'total' }]
         const countResult = await Order.aggregate(countPipeline)
@@ -173,7 +174,6 @@ export const transactionStatusByOrderId = async (req: Request, res: Response) =>
             return res.status(404).json({ success: false, message: "Order status does not exist" });
         }
 
-        // Combine order and orderStatus into a single object
         const combinedData = {
             id: order._id,
             custom_order_id: order.custom_order_id,
@@ -223,10 +223,9 @@ export const getTransactionBySchoolId = async (req: Request, res: Response) => {
             matchConditions['orderStatus.status'] = status;
         }
 
-        // Sort descending by payment_time
         const sortObj = { "orderStatus.payment_time": -1 };
 
-        const pipeline = [
+        const pipeline: any[] = [
             { $match: { school_id: new mongoose.Types.ObjectId(schoolId) } },
             {
                 $lookup: {
@@ -258,15 +257,12 @@ export const getTransactionBySchoolId = async (req: Request, res: Response) => {
             { $sort: sortObj }
         ];
 
-        // Count total records
         const countPipeline = [...pipeline, { $count: 'total' }];
         const countResult = await Order.aggregate(countPipeline);
         const total = countResult.length > 0 ? countResult[0].total : 0;
 
-        // Add pagination
         pipeline.push({ $skip: skip }, { $limit: limitNum });
 
-        // Execute aggregation
         const transactions = await Order.aggregate(pipeline);
 
         res.json({
@@ -293,52 +289,52 @@ export const getTransactionBySchoolId = async (req: Request, res: Response) => {
 
 
 export const dashboardData = async (req: Request, res: Response) => {
-  try {
-    const pipeline = [
-      {
-        $group: {
-          _id: "$status", // success / pending / failed
-          totalTransaction: { $sum: 1 },
-          totalAmount: { $sum: "$transaction_amount" },
-        },
-      },
-    ];
+    try {
+        const pipeline = [
+            {
+                $group: {
+                    _id: "$status",
+                    totalTransaction: { $sum: 1 },
+                    totalAmount: { $sum: "$transaction_amount" },
+                },
+            },
+        ];
 
-    const stats = await OrderStatus.aggregate(pipeline);
+        const stats = await OrderStatus.aggregate(pipeline);
 
-    // Initialize counters
-    let totalTransaction = 0;
-    let totalAmount = 0;
-    let totalSuccessful = 0;
-    let totalPending = 0;
-    let totalFailed = 0;
+        // Initialize counters
+        let totalTransaction = 0;
+        let totalAmount = 0;
+        let totalSuccessful = 0;
+        let totalPending = 0;
+        let totalFailed = 0;
 
-    stats.forEach((row) => {
-      if(row._id === "success"){
-          totalAmount += row.totalAmount;
-        }
-        totalTransaction += row.totalTransaction;
+        stats.forEach((row) => {
+            if (row._id === "success") {
+                totalAmount += row.totalAmount;
+            }
+            totalTransaction += row.totalTransaction;
 
-      if (row._id === "success") totalSuccessful = row.totalTransaction;
-      if (row._id === "pending") totalPending = row.totalTransaction;
-      if (row._id === "failed") totalFailed = row.totalTransaction;
-    });
+            if (row._id === "success") totalSuccessful = row.totalTransaction;
+            if (row._id === "pending") totalPending = row.totalTransaction;
+            if (row._id === "failed") totalFailed = row.totalTransaction;
+        });
 
-    return res.json({
-      status: "success",
-      data: {
-        totalTransaction,
-        totalAmount,
-        totalSuccessful,
-        totalPending,
-        totalFailed,
-      },
-    });
-  } catch (error) {
-    console.error("Dashboard error:", error);
-    return res.status(500).json({
-      status: "error",
-      message: "Failed to fetch dashboard data",
-    });
-  }
+        return res.json({
+            status: "success",
+            data: {
+                totalTransaction,
+                totalAmount,
+                totalSuccessful,
+                totalPending,
+                totalFailed,
+            },
+        });
+    } catch (error) {
+        console.error("Dashboard error:", error);
+        return res.status(500).json({
+            status: "error",
+            message: "Failed to fetch dashboard data",
+        });
+    }
 };

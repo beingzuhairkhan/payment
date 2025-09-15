@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { school, transactionAPI } from '../services/api';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
-import type { School } from '../types';
+import type { ISchoolData, ISchoolId, School } from '../types';
 import { useForm } from 'react-hook-form';
 
 const SchoolTransactions = () => {
@@ -26,7 +26,7 @@ const SchoolTransactions = () => {
     }
   );
 
-  const { register, formState: { errors } } = useForm();
+  const { register, formState: { errors } } = useForm<ISchoolId>();
 
   useEffect(() => {
     const fetchSchools = async () => {
@@ -41,7 +41,7 @@ const SchoolTransactions = () => {
   }, []);
 
   const transactions = (data?.data?.data?.transactions || []).sort(
-    (a, b) => new Date(b.payment_time).getTime() - new Date(a.payment_time).getTime()
+    (a:any, b:any) => new Date(b.payment_time).getTime() - new Date(a.payment_time).getTime()
   );
   const pagination = data?.data?.pagination || {};
 
@@ -151,11 +151,15 @@ const SchoolTransactions = () => {
                 <th className="px-4 py-2 text-left text-sm font-medium hidden md:table-cell">Payment Time</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {transactions.map((tx) => (
+            <tbody 
+            className="divide-y divide-gray-200 dark:divide-gray-700 "
+            >
+              {transactions.map((tx:ISchoolData) => (
 
-                <tr key={tx.collect_id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  {console.log(tx)}
+                <tr key={tx.collect_id}
+                   className="rounded-lg transition-all duration-200 hover:scale-[1.02] hover:bg-gray-50 dark:hover:bg-gray-700 hover:shadow-md "
+                 >
+
                   <td className="px-4 py-2 font-medium text-primary-600">{tx.custom_order_id}</td>
                   <td className="px-4 py-2">
                     <div className="font-medium">{tx.student_info?.name}</div>

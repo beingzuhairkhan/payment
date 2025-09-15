@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { transactionAPI } from '../services/api'
 import LoadingSpinner from '../components/UI/LoadingSpinner'
+import type { ITransactionStatus , TransactionStatus } from '../types'
 
 const TransactionStatus = () => {
   const [searchOrderId, setSearchOrderId] = useState('')
@@ -19,7 +20,7 @@ const TransactionStatus = () => {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm()
+  } = useForm<ITransactionStatus>()
 
   const { data, isLoading, error, refetch } = useQuery(
     ['transaction-status', searchOrderId],
@@ -30,7 +31,7 @@ const TransactionStatus = () => {
     }
   )
 
-  const onSubmit = (formData) => {
+  const onSubmit = (formData:ITransactionStatus) => {
     setSearchOrderId(formData.customOrderId.trim())
     setShouldSearch(true)
     refetch()
@@ -39,7 +40,7 @@ const TransactionStatus = () => {
   const transactionData = data?.data?.data
   // console.log("transactionData" , transactionData);
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status:TransactionStatus) => {
     switch (status) {
       case 'success':
         return <CheckCircleIcon className="h-8 w-8 text-success-500" />
@@ -52,7 +53,7 @@ const TransactionStatus = () => {
     }
   }
 
-  const getStatusBadgeClass = (status) => {
+  const getStatusBadgeClass = (status:TransactionStatus) => {
     switch (status) {
       case 'success':
         return 'status-badge status-success'
@@ -65,7 +66,7 @@ const TransactionStatus = () => {
     }
   }
 
-  const getStatusMessage = (status) => {
+  const getStatusMessage = (status:TransactionStatus) => {
     switch (status) {
       case 'success':
         return 'Payment completed successfully'
@@ -146,7 +147,7 @@ const TransactionStatus = () => {
                 Transaction Not Found
               </h3>
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                {error.response?.data?.message || 'The order ID you entered was not found in our system.'}
+                {'The order ID you entered was not found in our system.'}
               </p>
               <div className="mt-4">
                 <button

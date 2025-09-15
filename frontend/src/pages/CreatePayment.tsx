@@ -4,11 +4,12 @@ import toast from 'react-hot-toast'
 import { CreditCardIcon, LinkIcon } from '@heroicons/react/24/outline'
 import { paymentAPI, school } from '../services/api'
 import LoadingSpinner from '../components/UI/LoadingSpinner'
-import type { School } from '../types'
+import type { School, createPaymentTypes , PaymentResult } from '../types'
+
 
 const CreatePayment = () => {
   const [loading, setLoading] = useState(false)
-  const [paymentResult, setPaymentResult] = useState(null)
+  const [paymentResult, setPaymentResult] = useState<PaymentResult | null>(null)
   const [schools, setSchools] = useState<School[]>([]);
 
   // Fetch schools dynamically
@@ -18,9 +19,9 @@ const CreatePayment = () => {
     handleSubmit,
     formState: { errors },
     reset
-  } = useForm()
+  } = useForm<createPaymentTypes>()
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: createPaymentTypes) => {
     try {
       setLoading(true)
       const response = await paymentAPI.createPayment(data)
@@ -31,9 +32,9 @@ const CreatePayment = () => {
         reset()
       } else {
         // toast.error(response.data.message || 'Failed to create payment')
-          toast.success('Payment request created successfully!')
+        toast.success('Payment request created successfully!')
       }
-    } catch (error:any) {
+    } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to create payment request')
     } finally {
       setLoading(false)
@@ -87,16 +88,16 @@ const CreatePayment = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                 <div>
                   <span className="text-gray-500 dark:text-gray-400">Order ID:</span>
-                  <span className="ml-2 font-medium">{paymentResult.custom_order_id}</span>
+                  <span className="ml-2 font-medium dark:text-white">{paymentResult?.custom_order_id}</span>
                 </div>
                 <div>
                   <span className="text-gray-500 dark:text-gray-400">Amount:</span>
-                  <span className="ml-2 font-medium">₹{paymentResult.order_amount?.toLocaleString()}</span>
+                  <span className="ml-2 font-medium dark:text-white">₹{paymentResult?.order_amount?.toLocaleString()}</span>
                 </div>
                 <div className="md:col-span-2">
-                  <span className="text-gray-500 dark:text-gray-400">Expires At:</span>
-                  <span className="ml-2 font-medium">
-                    {new Date(paymentResult.expires_at).toLocaleString()}
+                  <span className="text-gray-500 dark:text-white">Expires At:</span>
+                  <span className="ml-2 font-medium dark:text-white">
+                    {new Date(Date.now() + 5 * 60 * 1000).toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -238,7 +239,7 @@ const CreatePayment = () => {
                   <option value="">-- Select a School --</option>
                   {schools.map((s) => (
                     <option key={s._id} value={s._id}>
-                       {s.name}
+                      {s.name}
                     </option>
                   ))}
                 </select>
@@ -259,7 +260,7 @@ const CreatePayment = () => {
               <div>
                 <label className="form-label">Order Amount *</label>
                 <div className="relative">
-                  
+
                   <input
                     type="number"
                     className="form-input pl-8"
@@ -292,12 +293,8 @@ const CreatePayment = () => {
                 <select
                   className="form-input"
                   {...register('gateway_name')}
-                    defaultValue="NetBanking"
+                  defaultValue="NetBanking"
                 >
-                  {/* <option value="PhonePe">PhonePe</option>
-                  <option value="Paytm">Paytm</option>
-                  <option value="Razorpay">Razorpay</option>
-                  <option value="UPI">UPI</option> */}
                   <option value="NetBanking">Net Banking</option>
                 </select>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -306,8 +303,6 @@ const CreatePayment = () => {
               </div>
             </div>
           </div>
-
-          
 
           {/* Terms and Conditions */}
           <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">

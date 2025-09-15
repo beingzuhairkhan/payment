@@ -1,5 +1,3 @@
-import dotenv from 'dotenv'
-dotenv.config();
 import { Request, Response } from "express";
 import { createPaymentValidation } from '../utils/validation'
 import Order from "../models/order.model";
@@ -17,11 +15,10 @@ export const createPayment = async (req: Request, res: Response) => {
                 message: error.details[0].message
             })
         }
-        const trusteeId = req.user._id;
+        const trusteeId = req.user?._id;
         
-        const { school_id, student_info, gateway_name = "PhonePe", order_amount } = data
+        const { school_id, student_info, gateway_name = "NetBanking", order_amount } = data
         const order = await Order.create({
-            // school_id:process.env.EDVIRON_SCHOOL_ID,
             school_id,
             trustee_id: trusteeId,
             student_info,
@@ -42,16 +39,13 @@ export const createPayment = async (req: Request, res: Response) => {
             payment_time: new Date()
         })
 
-        // console.log("school_id", school_id)
-        // const EDVIRON_SCHOOL_ID = school_id
         const vanillaPayload = {
             school_id: process.env.EDVIRON_SCHOOL_ID,
             amount: order_amount.toString(),
             callback_url: `${process.env.FRONTEND_URL}/payment-callback`,
         };
 
-        //  Sign with Edviron secret key (not pg_key)
-        const vanillaSign = jwt.sign(vanillaPayload, process.env.PG_SECRET);
+        const vanillaSign = jwt.sign(vanillaPayload, process.env.PG_SECRET!);
 
         //  Call Edviron Collect Request API
         const response = await axios.post(
@@ -63,7 +57,7 @@ export const createPayment = async (req: Request, res: Response) => {
             {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${process.env.PG_API_KEY.trim()}`,
+                    Authorization: `Bearer ${process.env.PG_API_KEY}`,
                 },
             }
         );
@@ -71,16 +65,12 @@ export const createPayment = async (req: Request, res: Response) => {
         //console.log("Response Data:", response.data);
 
         const collect_request_id = response.data.collect_request_id;
-        //  console.log("collect_request_id",collect_request_id)
 
-        // Fix Mongoose update method
         const updatedStatus = await OrderStatus.findOneAndUpdate(
             { collect_id: order._id },
             { collectRequestId: collect_request_id },
             { new: true }
         );
-        console.log("Updated OrderStatus:", updatedStatus);
-        //  Send final response
         res.json({
             status: "success",
             message: "Payment request created successfully",
@@ -95,7 +85,6 @@ export const createPayment = async (req: Request, res: Response) => {
 
 
     } catch (error) {
-        console.error('Payment creation error:', error);
         return res.status(500).json({
             status: 'error',
             message: 'Failed to create payment request'
@@ -106,20 +95,16 @@ export const createPayment = async (req: Request, res: Response) => {
 
 export const verifyPayment = async (req: Request, res: Response) => {
     const { collect_request_id } = req.query;
-    // console.log("collect_request_id", collect_request_id)
     if (!collect_request_id) {
         return res.status(400).json({ error: "collect_request_id is required" });
     }
-
     try {
-        const school_id = "65b0e6293e9f76a9694d84b4"
-        // const PG_SECRET = process.env.PG_SECRET_KEY;
-        // const PG_API_KEY = process.env.PG_API_KEY;
-
+        const school_id = process.env.EDVIRON_SCHOOL_ID
+        const pgSecret = process.env.PG_SECRET
         // Create JWT for verification
         const sign = jwt.sign(
             { school_id, collect_request_id },
-            "edvtest01",
+             pgSecret,
             { expiresIn: "1h" }
         );
 
@@ -129,15 +114,13 @@ export const verifyPayment = async (req: Request, res: Response) => {
             {
                 params: { school_id, sign },
                 headers: {
-                    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cnVzdGVlSWQiOiI2NWIwZTU1MmRkMzE5NTBhOWI0MWM1YmEiLCJJbmRleE9mQXBpS2V5Ijo2fQ.IJWTYCOurGCFdRM2xyKtw6TEcuwXxGnmINrXFfsAdt0`,
+                    Authorization: `Bearer ${process.env.PG_API_KEY}`,
                     "Content-Type": "application/json",
                 },
             }
         );
         const paymentData = response.data;
-        //console.log("paymentData", paymentData)
-
-        // Update OrderStatus in MongoDB
+  
         const updatedOrder = await OrderStatus.findOneAndUpdate(
             { collectRequestId: collect_request_id },
             {
@@ -168,21 +151,3 @@ export const verifyPayment = async (req: Request, res: Response) => {
     }
 };
 
-// collect_request_id 68c5cbcc154d1bce65b42388
-// {
-//   status: 'SUCCESS',
-//   amount: 1,
-//   transaction_amount: 1,
-//   status_code: 200,
-//   details: {
-//     payment_mode: 'upi',
-//     bank_ref: '1234567890',
-//     payment_methods: { upi: [Object] }
-//   },
-//   custom_order_id: 'NA',
-//   capture_status: 'PENDING',
-
-// collect_request_id 68c5ccea154d1bce65b4243f
-// { upi: { channel: null, upi_id: 'success@upi' } }
-// collect_request_id 68c5ccea154d1bce65b4243f
-// { upi: { channel: null, upi_id: 'success@upi' } }

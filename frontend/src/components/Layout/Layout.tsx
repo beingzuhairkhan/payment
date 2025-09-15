@@ -2,15 +2,17 @@ import React, { useState } from 'react'
 import Sidebar from './Sidebar'
 import Header from './Header'
 
-const Layout = ({ children }) => {
+interface MyProps {
+  children?: React.ReactNode;
+}
+
+
+const Layout = ({ children }:MyProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
-      {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <Header onMenuClick={() => setSidebarOpen(true)} />

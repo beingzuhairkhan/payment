@@ -1,4 +1,3 @@
-import React from 'react'
 import { useQuery } from 'react-query'
 import { 
   CurrencyDollarIcon, 
@@ -10,25 +9,24 @@ import {
 import { ArrowTrendingUpIcon } from '@heroicons/react/24/outline'
 import { transactionAPI } from '../services/api'
 import LoadingSpinner from '../components/UI/LoadingSpinner'
-import Transactions from './Transactions';
-import { data } from 'react-router-dom'
+import type { Stat } from '../types'
+
+type ColorKey = "primary" | "secondary" | "success" | "pending" | "error";
 
 const Dashboard = () => {
   const { data, isLoading: statsLoading } = useQuery(
     'transaction-stats',
     () => transactionAPI.getTransactionStats(),
     {
-      refetchInterval: 30000, // Refetch every 30 seconds
+      refetchInterval: 30000,
     }
   )
 
 
-  console.log("Response" , data?.data?.data)
-
   const stats = data?.data?.data || {}
 
 
-  const statCards = [
+  const statCards: Stat[] = [
     {
       title: 'Total Transactions',
       value: stats.totalTransaction || 0,
@@ -62,18 +60,18 @@ const Dashboard = () => {
     }
   ]
 
-  const getStatusBadgeClass = (status) => {
-    switch (status) {
-      case 'success':
-        return 'status-badge status-success'
-      case 'failed':
-        return 'status-badge status-failed'
-      case 'pending':
-        return 'status-badge status-pending'
-      default:
-        return 'status-badge status-cancelled'
-    }
-  }
+  // const getStatusBadgeClass = (status:any) => {
+  //   switch (status) {
+  //     case 'success':
+  //       return 'status-badge status-success'
+  //     case 'failed':
+  //       return 'status-badge status-failed'
+  //     case 'pending':
+  //       return 'status-badge status-pending'
+  //     default:
+  //       return 'status-badge status-cancelled'
+  //   }
+  // }
 
   if (statsLoading) {
     return (
@@ -105,7 +103,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {statCards.map((stat, index) => {
           const Icon = stat.icon
-          const colorClasses = {
+          const colorClasses : Record<ColorKey, string>= {
             primary: 'bg-primary-500 text-white',
             secondary: 'bg-secondary-500 text-white',
             success: 'bg-success-500 text-white',

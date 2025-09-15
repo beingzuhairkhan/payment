@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
 export interface IOrderStatus extends Document {
-  collect_id: mongoose.Types.ObjectId; // Reference to Order
+  collect_id: mongoose.Types.ObjectId;
   order_amount: number;
   collectRequestId:string;
   transaction_amount: number;
@@ -9,7 +9,7 @@ export interface IOrderStatus extends Document {
   payment_details: string;
   bank_reference: string;
   payment_message: string;
-  status: "pending" | "success" | "failed" | "cancelled" | "refunded";
+  status: "pending" | "success" | "failed" ;
   error_message: string;
   payment_time: Date;
   createdAt: Date;
@@ -30,7 +30,6 @@ const orderStatusSchema = new Schema<IOrderStatus>(
     },
     collectRequestId :{
       type:String,
-      // required:true
     },
     transaction_amount: {
       type: Number,
@@ -56,7 +55,7 @@ const orderStatusSchema = new Schema<IOrderStatus>(
     },
     status: {
       type: String,
-      enum: ["pending", "success", "failed", "cancelled", "refunded"],
+      enum: ["pending", "success", "failed"],
       default: "pending",
       required: [true, "Status is required"],
     },

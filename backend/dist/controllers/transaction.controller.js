@@ -57,9 +57,8 @@ const getAllTransactions = (req, res) => __awaiter(void 0, void 0, void 0, funct
             ];
         }
         const sortObj = {};
-        const sortField = sort.includes('.') ? sort : `orderStatus.${sort}`;
-        sortObj[sortField] = order === 'desc' ? -1 : 1;
-        // Aggregation pipeline
+        const sortField = sort || 'payment_time';
+        sortObj[sortField] = (order === null || order === void 0 ? void 0 : order.toLowerCase()) === 'desc' ? -1 : 1;
         const pipeline = [
             {
                 $lookup: {
@@ -157,7 +156,6 @@ const transactionStatusByOrderId = (req, res) => __awaiter(void 0, void 0, void 
         if (!orderStatus) {
             return res.status(404).json({ success: false, message: "Order status does not exist" });
         }
-        // Combine order and orderStatus into a single object
         const combinedData = Object.assign({ id: order._id, custom_order_id: order.custom_order_id, gateway_name: order.gateway_name, student_info: order.student_info, school_id: order.school_id, created_at: order.createdAt }, orderStatus.toObject());
         return res.status(200).json({
             success: true,
@@ -192,7 +190,6 @@ const getTransactionBySchoolId = (req, res) => __awaiter(void 0, void 0, void 0,
         if (status) {
             matchConditions['orderStatus.status'] = status;
         }
-        // Sort descending by payment_time
         const sortObj = { "orderStatus.payment_time": -1 };
         const pipeline = [
             { $match: { school_id: new mongoose_1.default.Types.ObjectId(schoolId) } },
@@ -225,13 +222,10 @@ const getTransactionBySchoolId = (req, res) => __awaiter(void 0, void 0, void 0,
             },
             { $sort: sortObj }
         ];
-        // Count total records
         const countPipeline = [...pipeline, { $count: 'total' }];
         const countResult = yield order_model_1.default.aggregate(countPipeline);
         const total = countResult.length > 0 ? countResult[0].total : 0;
-        // Add pagination
         pipeline.push({ $skip: skip }, { $limit: limitNum });
-        // Execute aggregation
         const transactions = yield order_model_1.default.aggregate(pipeline);
         res.json({
             status: 'success',
@@ -260,7 +254,7 @@ const dashboardData = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const pipeline = [
             {
                 $group: {
-                    _id: "$status", // success / pending / failed
+                    _id: "$status",
                     totalTransaction: { $sum: 1 },
                     totalAmount: { $sum: "$transaction_amount" },
                 },

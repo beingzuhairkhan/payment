@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useForm } from 'react-hook-form'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import type { ILogin } from '../types'
+import LoadingSpinner from '../components/UI/LoadingSpinner'
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false)
@@ -13,9 +15,9 @@ const Login = () => {
         handleSubmit,
         formState: { errors },
         reset
-    } = useForm()
+    } = useForm<ILogin>()
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (data:ILogin) => {
         if (isRegistering) {
             const result = await registerUser(data)
             if (result.success) {

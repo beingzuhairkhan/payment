@@ -37,7 +37,6 @@ const orderStatusSchema = new mongoose_1.Schema({
     },
     collectRequestId: {
         type: String,
-        // required:true
     },
     transaction_amount: {
         type: Number,
@@ -63,7 +62,7 @@ const orderStatusSchema = new mongoose_1.Schema({
     },
     status: {
         type: String,
-        enum: ["pending", "success", "failed", "cancelled", "refunded"],
+        enum: ["pending", "success", "failed"],
         default: "pending",
         required: [true, "Status is required"],
     },

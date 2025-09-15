@@ -22,7 +22,6 @@ export default function PaymentCallback() {
       axios
         .get(`http://localhost:5000/api/order/verify-payment?collect_request_id=${collectRequestId}`)
         .then((res) => {
-          console.log("Response:", res.data);
           if (res.data.status === "success") {
             setStatus("success");
             setMessage("Payment Successful! 🎉");
@@ -51,7 +50,7 @@ export default function PaymentCallback() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
+    <div className="flex items-center justify-center min-h-screen  px-4">
       <div
         className={`max-w-md w-full border-l-4 p-6 rounded shadow-md ${statusStyles[status]} transition-all duration-500`}
       >

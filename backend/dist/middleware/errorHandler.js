@@ -15,11 +15,6 @@ const errorHandler = (err, req, res, next) => {
         const message = 'Duplicate field value entered';
         error = { message, statusCode: 400 };
     }
-    // Mongoose validation error
-    // if (err.name === 'ValidationError') {
-    //     const message = Object.values(err.errors).map(val => val:any.message).join(', ');
-    //     error = { message, statusCode: 400 };
-    // }
     // JWT error
     if (err.name === 'JsonWebTokenError') {
         const message = 'Invalid token';

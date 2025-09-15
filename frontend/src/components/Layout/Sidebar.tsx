@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { 
   XMarkIcon, 
@@ -27,7 +26,7 @@ const Sidebar = ({ isOpen, onClose }) => {
   const location = useLocation()
   const { user, logout } = useAuth()
 
-  const isCurrentPath = (path) => {
+  const isCurrentPath = (path:string) => {
     return location.pathname === path
   }
 

@@ -8,10 +8,6 @@ import { NewUser } from "../utils/types";
 import mongoose from 'mongoose';
 
 
-export interface AuthRequest extends Request {
-  user?: NewUser; 
-}
-
 
 export function generateJWTToken({ _id, name, email }: NewUser): string {
     const JWT_SECRET = process.env.JWT_SECRET;
@@ -135,7 +131,7 @@ export const login = async (req: Request, res: Response) => {
     }
 }
 
-export const me = async (req: AuthRequest, res: Response) => {
+export const me = async (req: Request, res: Response) => {
     try {
         if (!req.user) {
             return res.status(401).json({
@@ -163,7 +159,7 @@ export const me = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export const refreshToken = async (req: AuthRequest, res: Response) => {
+export const refreshToken = async (req: Request, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({
@@ -174,9 +170,8 @@ export const refreshToken = async (req: AuthRequest, res: Response) => {
 
     const { _id, name, email } = req.user;
 
-    // Pass a single object
     const token = generateJWTToken({
-      _id: _id,   // or _id.toString() if your NewUser._id is string
+      _id: _id,   
       name,
       email
     });
