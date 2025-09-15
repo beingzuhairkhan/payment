@@ -3,7 +3,7 @@ import type { School } from "../types";
 import { school } from "../services/api";
 import toast from "react-hot-toast";
 
-const School = () => {
+const AllSchool = () => {
   const [schools, setSchools] = useState<School[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
@@ -136,4 +136,4 @@ const School = () => {
   );
 };
 
-export default School;
+export default AllSchool;

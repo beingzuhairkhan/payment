@@ -12,7 +12,7 @@ import { transactionAPI } from '../services/api'
 import LoadingSpinner from '../components/UI/LoadingSpinner'
 import type { ITransactionStatus , TransactionStatus } from '../types'
 
-const TransactionStatus = () => {
+const AllTransactionStatus = () => {
   const [searchOrderId, setSearchOrderId] = useState('')
   const [shouldSearch, setShouldSearch] = useState(false)
 
@@ -336,4 +336,4 @@ const TransactionStatus = () => {
   )
 }
 
-export default TransactionStatus
+export default AllTransactionStatus

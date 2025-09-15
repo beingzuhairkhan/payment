@@ -6,8 +6,8 @@ import Login from './pages/Login';
 import Layout from './components/Layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
+import TransactionStatus from './pages/TransactionStatus'
 import SchoolTransactions from './pages/SchoolTransactions';
-import TransactionStatus from './pages/TransactionStatus';
 import Settings from './pages/Settings';
 import CreatePayment from './pages/CreatePayment';
 import School from './pages/School';

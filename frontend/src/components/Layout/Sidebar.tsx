@@ -22,7 +22,12 @@ const navigation = [
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
 ]
 
-const Sidebar = ({ isOpen, onClose }) => {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const Sidebar = ({ isOpen, onClose }:SidebarProps) => {
   const location = useLocation()
   const { user, logout } = useAuth()
 

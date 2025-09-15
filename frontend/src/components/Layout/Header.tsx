@@ -1,10 +1,10 @@
-import React from 'react'
 import { Bars3Icon, SunIcon, MoonIcon } from '@heroicons/react/24/solid'
 import { useTheme } from '../../contexts/ThemeContext'
 
 interface SidebarProps {
   onMenuClick: () => void;
 }
+
 
 const Header = ({ onMenuClick }:SidebarProps) => {
   const { isDark, toggleTheme } = useTheme()
