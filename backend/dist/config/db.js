@@ -17,27 +17,10 @@ const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const conn = yield mongoose_1.default.connect(process.env.MONGODB_URI);
         console.log(`MongoDB Connected: ${conn.connection.host}`);
-        yield createIndex();
     }
     catch (error) {
         console.error('Database connection error:', error.message);
         process.exit(1);
-    }
-});
-const createIndex = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const db = mongoose_1.default.connection.db;
-        yield (db === null || db === void 0 ? void 0 : db.collection('orders').createIndex({ school_id: 1 }));
-        yield (db === null || db === void 0 ? void 0 : db.collection('orders').createIndex({ trustee_id: 1 }));
-        yield (db === null || db === void 0 ? void 0 : db.collection('orders').createIndex({ "student_info": 1 }));
-        yield (db === null || db === void 0 ? void 0 : db.collection('orderStatuss').createIndex({ collect_id: 1 }));
-        yield (db === null || db === void 0 ? void 0 : db.collection('orderStatuss').createIndex({ status: 1 }));
-        yield (db === null || db === void 0 ? void 0 : db.collection('orderStatuss').createIndex({ payment_time: 1 }));
-        yield (db === null || db === void 0 ? void 0 : db.collection('users').createIndex({ email: 1 }, { unique: true }));
-        console.log('Database indexes created successfully');
-    }
-    catch (error) {
-        console.error('Error creating indexes:', error.message);
     }
 });
 exports.default = connectDB;
