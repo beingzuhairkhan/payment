@@ -2,20 +2,25 @@ import React, { useEffect, useState } from "react";
 import type { School } from "../types";
 import { school } from "../services/api";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../components/UI/LoadingSpinner";
 
 const AllSchool = () => {
   const [schools, setSchools] = useState<School[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
   // Load schools
   const fetchSchools = async () => {
     try {
+      setLoading(true);
       const data = await school.getAllSchools();
       setSchools(data);
     } catch (err) {
       console.error("Error fetching schools:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,6 +46,12 @@ const AllSchool = () => {
   useEffect(() => {
     fetchSchools();
   }, []);
+
+  if(loading){
+    return(
+      <div className="flex justify-center py-12"><LoadingSpinner size="lg" /></div>
+    )
+  }
 
   return (
     <div className="p-8 min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-white transition-colors">
@@ -127,7 +138,7 @@ const AllSchool = () => {
               type="submit"
               className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition"
             >
-               Create School
+              Create School
             </button>
           </form>
         </div>

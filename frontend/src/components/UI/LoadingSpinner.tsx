@@ -1,5 +1,3 @@
-import { BoltIcon } from '@heroicons/react/24/solid';
-
 type Size = 'sm' | 'md' | 'lg' | 'xl';
 
 interface Props {
@@ -15,24 +13,22 @@ const LoadingSpinner: React.FC<Props> = ({ size = 'md', className = '' }) => {
     xl: 'h-16 w-16',
   };
 
-  const iconSizeClasses: Record<Size, string> = {
-    sm: 'h-3 w-3',
-    md: 'h-4 w-4',
-    lg: 'h-5 w-5',
-    xl: 'h-6 w-6',
-  };
-
   return (
-    <div className={`relative inline-block ${sizeClasses[size]} ${className}`} role="status">
-      <div className="w-full h-full border-2 border-gray-300 border-t-primary-500 rounded-full animate-spin dark:border-gray-600 dark:border-t-primary-400"></div>
-
-      <div
-        className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-        style={{ transformOrigin: '50% 50%' }}
-      >
-        <BoltIcon className={`${iconSizeClasses[size]} text-yellow-500`} />
-      </div>
-    </div>
+   <div
+  className={`inline-block ${sizeClasses[size]} ${className}`}
+  role="status"
+>
+  <div
+    className={`
+      w-full h-full 
+      border-4
+      border-gray-300 dark:border-gray-700
+      border-t-primary-500 dark:border-t-primary-400
+      rounded-full
+      animate-spin
+    `}
+  ></div>
+</div>
   );
 };
 
