@@ -20,7 +20,7 @@ export default function PaymentCallback() {
 
     if (paymentStatus === "SUCCESS") {
       axios
-        .get(`https://payment-8a95.onrender.com/api/order/verify-payment?collect_request_id=${collectRequestId}`)
+        .get(`https://payment-f38u.onrender.com/api/order/verify-payment?collect_request_id=${collectRequestId}`)
         .then((res) => {
           if (res.data.status === "success") {
             setStatus("success");
