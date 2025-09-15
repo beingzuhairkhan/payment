@@ -94,8 +94,8 @@ export type  Filters = {
   limit: number
   sort: string
   order: 'asc' | 'desc'
-  status: string[]         // 👈 changed from string to string[]
-  gateway: string[]        // multi-select
+  status: string[]        
+  gateway: string[]        
   search: string
   from_date: string
   to_date: string

@@ -1,6 +1,13 @@
-import React from 'react'
 
-const LoadingSpinner = ({ size = 'md', className = '' }) => {
+type Size = 'sm' | 'md' | 'lg' | 'xl';
+
+interface Props {
+  size: Size;
+  className?: string;
+}
+
+
+const LoadingSpinner = ({ size = 'md', className = '' }:Props) => {
   const sizeClasses = {
     sm: 'h-4 w-4',
     md: 'h-6 w-6', 

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { CreditCardIcon, LinkIcon } from '@heroicons/react/24/outline'
 import { paymentAPI, school } from '../services/api'
 import LoadingSpinner from '../components/UI/LoadingSpinner'
-import type { School, createPaymentTypes , PaymentResult } from '../types'
+import type { School, createPaymentTypes , PaymentResult, PaymentData } from '../types'
 
 
 const CreatePayment = () => {
@@ -24,7 +24,7 @@ const CreatePayment = () => {
   const onSubmit = async (data: createPaymentTypes) => {
     try {
       setLoading(true)
-      const response = await paymentAPI.createPayment(data)
+      const response = await paymentAPI.createPayment(data as unknown as PaymentData)
       console.log("response ", response)
       if (response.data.status === 'success') {
         setPaymentResult(response.data.data)
