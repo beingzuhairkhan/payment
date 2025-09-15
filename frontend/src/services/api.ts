@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
 import type { PaymentData, School } from '../types';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL =import.meta.env.VITE_API_URL 
 
 interface AxiosRequestConfigWithRetry extends AxiosRequestConfig {
   _retry?: boolean;

@@ -5,15 +5,14 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
- "start": "node -r dotenv/config dist/index.js",
-  "dev": "nodemon -r dotenv/config dist/index.js"
+    "start": "node -r dotenv/config dist/index.js",
+    "dev": "nodemon -r dotenv/config dist/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@types/axios": "^0.14.4",
     "@types/helmet": "^4.0.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
@@ -25,6 +24,7 @@
     "nodemon": "^3.1.10"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.4",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",

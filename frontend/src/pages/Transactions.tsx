@@ -358,7 +358,7 @@ const Transactions = () => {
                       </div>
                     </th>
                     <th
-                      className="table-header-cell responsive-hide-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
+                      className="table-header-cell cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
                       onClick={() => handleSort('payment_time')}
                     >
                       <div className="flex items-center">
@@ -446,7 +446,7 @@ const Transactions = () => {
                           {transaction.status}
                         </span>
                       </td>
-                      <td className="table-cell responsive-hide-md">
+                      <td className="table-cell ">
                         <div className="text-sm">
                           <div>{new Date(transaction.payment_time).toLocaleDateString()}</div>
                           <div className="text-gray-500 dark:text-gray-400">
